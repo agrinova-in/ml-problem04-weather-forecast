@@ -3,21 +3,36 @@
 ## Overview
 A machine learning model that predicts rainfall based on weather parameters.
 Built using Random Forest Classifier with hyperparameter tuning via GridSearchCV.
-
-> Note: The problem title says ARIMA but the implementation uses Random Forest
-> Classification on a rainfall dataset, which better suits the tabular weather data.
+Trained on a custom dataset with full ML pipeline — from data collection to model deployment.
 
 ## Tech Stack
-- Python
+- Python 3
 - Pandas, NumPy
-- Scikit-learn (RandomForestClassifier, GridSearchCV)
+- Scikit-learn (RandomForestClassifier, GridSearchCV, cross_val_score)
 - Matplotlib, Seaborn
 - Google Colab
-- Pickle (model saving)
+- Pickle (model saving and loading)
 
 ## Dataset
 Custom dataset: `Rainfall.csv`
-Features used after preprocessing:
+
+### Raw Features
+| Feature | Description |
+|---|---|
+| day | Day identifier (dropped during preprocessing) |
+| pressure | Atmospheric pressure |
+| maxtemp | Maximum temperature (dropped — high correlation) |
+| temparature | Temperature (dropped — high correlation) |
+| mintemp | Minimum temperature (dropped — high correlation) |
+| dewpoint | Dew point temperature |
+| humidity | Humidity percentage |
+| cloud | Cloud cover |
+| sunshine | Hours of sunshine |
+| winddirection | Wind direction |
+| windspeed | Wind speed |
+| rainfall | Target: yes/no → 1/0 |
+
+### Final Features Used for Training
 | Feature | Description |
 |---|---|
 | pressure | Atmospheric pressure |
@@ -28,86 +43,113 @@ Features used after preprocessing:
 | winddirection | Wind direction |
 | windspeed | Wind speed |
 
-Target: `rainfall` (1 = Yes, 0 = No)
+Target: `rainfall` (1 = Rainfall, 0 = No Rainfall)
+
+---
 
 ## ML Pipeline
 
-### 1. Data Collection & Preprocessing
-- Loaded custom CSV dataset
-- Removed extra whitespace from column names
-- Dropped `day` column (non-numeric)
-- Handled missing values:
+### 1. Data Collection & Loading
+- Custom CSV dataset uploaded via Google Colab
+- Loaded using Pandas
+
+### 2. Data Preprocessing
+- Stripped extra whitespace from all column names
+- Dropped `day` column (non-numeric, not useful)
+- Checked and handled missing values:
   - `winddirection` → filled with mode
   - `windspeed` → filled with median
-- Converted `rainfall` from yes/no to 1/0
+- Converted target `rainfall` from yes/no to 1/0
 - Dropped highly correlated columns: `maxtemp`, `temparature`, `mintemp`
 
-### 2. Exploratory Data Analysis
-- Distribution plots for all numeric features
-- Rainfall class distribution (countplot)
-- Correlation heatmap
-- Boxplots for outlier detection
+### 3. Exploratory Data Analysis (EDA)
+- Distribution histograms with KDE for all numeric features
+- Rainfall class distribution countplot
+- Correlation heatmap (coolwarm)
+- Boxplots for outlier detection across all features
 
-### 3. Handling Class Imbalance
-- Identified majority/minority class
-- Downsampled majority class to match minority count
-- Shuffled final balanced dataset
+### 4. Handling Class Imbalance
+- Checked class distribution using `value_counts()`
+- Separated majority and minority classes
+- Downsampled majority class to match minority count using `sklearn.utils.resample`
+- Concatenated and shuffled the balanced dataset
 
-### 4. Model Training
+### 5. Train/Test Split
+- Features: `X` (all columns except rainfall)
+- Target: `y` (rainfall)
+- Split: 80% train, 20% test (`random_state=42`)
+
+### 6. Model Training
 - Algorithm: Random Forest Classifier
-- Hyperparameter tuning: GridSearchCV with 5-fold cross validation
+- Hyperparameter tuning via GridSearchCV (5-fold cross validation)
 - Parameters tuned:
-  - `n_estimators`: [50, 100, 200]
-  - `max_features`: [sqrt, log2]
-  - `max_depth`: [None, 10, 20, 30]
-  - `min_samples_split`: [2, 5, 10]
-  - `min_samples_leaf`: [1, 2, 4]
 
-### 5. Model Evaluation
-- Cross-validation scores (5-fold)
+| Parameter | Values |
+|---|---|
+| n_estimators | 50, 100, 200 |
+| max_features | sqrt, log2 |
+| max_depth | None, 10, 20, 30 |
+| min_samples_split | 2, 5, 10 |
+| min_samples_leaf | 1, 2, 4 |
+
+- Best parameters selected automatically by GridSearchCV
+
+### 7. Model Evaluation
+- 5-fold cross-validation scores on training set
+- Mean cross-validation score
 - Test set accuracy
 - Confusion matrix
-- Classification report (precision, recall, F1)
+- Classification report (precision, recall, F1-score)
 
-### 6. Prediction
-- Accepts new weather input as tuple
+### 8. Prediction on New Data
+- Accepts weather input as a tuple
 - Returns: `Rainfall` or `No Rainfall`
 
-### 7. Model Saving
-- Saved model + feature names to `rainfall_prediction_model.pkl` using Pickle
+### 9. Model Saving & Loading
+- Model and feature names saved to `rainfall_prediction_model.pkl` using Pickle
 - Can be loaded and reused without retraining
+
+---
 
 ## Sample Prediction
 ```python
 input_data = (1015.9, 19.9, 95, 81, 0.0, 40.0, 13.7)
+# pressure, dewpoint, humidity, cloud, sunshine, winddirection, windspeed
+
 # Output: Rainfall
 ```
+
+---
 
 ## How to Run
 
 ### On Google Colab (recommended)
-1. Open the notebook in Google Colab
+1. Open the notebook link below
 2. Upload `Rainfall.csv` when prompted
 3. Run all cells in order
-4. Model saves as `rainfall_prediction_model.pkl`
+4. Model saves automatically as `rainfall_prediction_model.pkl`
 
 ### Locally
 ```bash
-pip install numpy pandas matplotlib seaborn scikit-learn
+pip install numpy pandas matplotlib seaborn scikit-learn jupyter
 jupyter notebook
 ```
-Upload `Rainfall.csv` and run all cells.
+Then open `Problem_04_Machine_Learning.ipynb` and upload `Rainfall.csv` when prompted.
+
+---
 
 ## Files
 ```
-├── weather_forecast.ipynb     # Main notebook
-├── Rainfall.csv               # Dataset
-├── rainfall_prediction_model.pkl  # Saved model (generated after run)
+├── Problem_04_Machine_Learning.ipynb   # Main Colab notebook
+├── Rainfall.csv                        # Custom dataset
+├── rainfall_prediction_model.pkl       # Saved trained model (generated after run)
 └── README.md
 ```
 
+---
+
 ## Deployment Link
-[Google Colab Notebook](#) ← paste your Colab share link here
+[Open in Google Colab](https://colab.research.google.com/drive/1IBPSARZbRqoZG7Nga_QwIIdXfpOZvOOT?usp=sharing)
 
 ## GitHub Repository
-[Problem 4 — Weather Forecast](https://github.com/agrinova-in/Weather-Forecast-ARIMA)
+[Problem 4 — Weather Forecast](https://github.com/agrinova-in/ml-problem04-weather-forecast)
