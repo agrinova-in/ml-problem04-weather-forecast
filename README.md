@@ -12,36 +12,37 @@ Trained on a custom dataset with full ML pipeline — from data collection to mo
 - Matplotlib, Seaborn
 - Google Colab
 - Pickle (model saving and loading)
+- Streamlit (web app deployment)
 
 ## Dataset
 Custom dataset: `Rainfall.csv`
 
 ### Raw Features
-| Feature | Description |
-|---|---|
-| day | Day identifier (dropped during preprocessing) |
-| pressure | Atmospheric pressure |
-| maxtemp | Maximum temperature (dropped — high correlation) |
-| temparature | Temperature (dropped — high correlation) |
-| mintemp | Minimum temperature (dropped — high correlation) |
-| dewpoint | Dew point temperature |
-| humidity | Humidity percentage |
-| cloud | Cloud cover |
-| sunshine | Hours of sunshine |
-| winddirection | Wind direction |
-| windspeed | Wind speed |
-| rainfall | Target: yes/no → 1/0 |
+| Feature       | Description                                      |
+| ------------- | ------------------------------------------------ |
+| day           | Day identifier (dropped during preprocessing)    |
+| pressure      | Atmospheric pressure                             |
+| maxtemp       | Maximum temperature (dropped — high correlation) |
+| temparature   | Temperature (dropped — high correlation)         |
+| mintemp       | Minimum temperature (dropped — high correlation) |
+| dewpoint      | Dew point temperature                            |
+| humidity      | Humidity percentage                              |
+| cloud         | Cloud cover                                      |
+| sunshine      | Hours of sunshine                                |
+| winddirection | Wind direction                                   |
+| windspeed     | Wind speed                                       |
+| rainfall      | Target: yes/no → 1/0                             |
 
 ### Final Features Used for Training
-| Feature | Description |
-|---|---|
-| pressure | Atmospheric pressure |
-| dewpoint | Dew point temperature |
-| humidity | Humidity percentage |
-| cloud | Cloud cover |
-| sunshine | Hours of sunshine |
-| winddirection | Wind direction |
-| windspeed | Wind speed |
+| Feature       | Description           |
+| ------------- | --------------------- |
+| pressure      | Atmospheric pressure  |
+| dewpoint      | Dew point temperature |
+| humidity      | Humidity percentage   |
+| cloud         | Cloud cover           |
+| sunshine      | Hours of sunshine     |
+| winddirection | Wind direction        |
+| windspeed     | Wind speed            |
 
 Target: `rainfall` (1 = Rainfall, 0 = No Rainfall)
 
@@ -84,13 +85,13 @@ Target: `rainfall` (1 = Rainfall, 0 = No Rainfall)
 - Hyperparameter tuning via GridSearchCV (5-fold cross validation)
 - Parameters tuned:
 
-| Parameter | Values |
-|---|---|
-| n_estimators | 50, 100, 200 |
-| max_features | sqrt, log2 |
-| max_depth | None, 10, 20, 30 |
-| min_samples_split | 2, 5, 10 |
-| min_samples_leaf | 1, 2, 4 |
+| Parameter         | Values           |
+| ----------------- | ---------------- |
+| n_estimators      | 50, 100, 200     |
+| max_features      | sqrt, log2       |
+| max_depth         | None, 10, 20, 30 |
+| min_samples_split | 2, 5, 10         |
+| min_samples_leaf  | 1, 2, 4          |
 
 - Best parameters selected automatically by GridSearchCV
 
@@ -131,6 +132,12 @@ input_data = (1015.9, 19.9, 95, 81, 0.0, 40.0, 13.7)
 
 ### Locally
 ```bash
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+Or to run the notebook:
+```bash
 pip install numpy pandas matplotlib seaborn scikit-learn jupyter
 jupyter notebook
 ```
@@ -143,12 +150,19 @@ Then open `Problem_04_Machine_Learning.ipynb` and upload `Rainfall.csv` when pro
 ├── Problem_04_Machine_Learning.ipynb   # Main Colab notebook
 ├── Rainfall.csv                        # Custom dataset
 ├── rainfall_prediction_model.pkl       # Saved trained model (generated after run)
+├── app.py                              # Streamlit web app
+├── requirements.txt                    # Python dependencies
 └── README.md
 ```
 
 ---
 
-## Deployment Link
+## Deployment
+
+### Streamlit App (Live)
+[Open Streamlit App](https://ml-problem04-weather-forecast.streamlit.app/)
+
+### Google Colab
 [Open in Google Colab](https://colab.research.google.com/drive/1IBPSARZbRqoZG7Nga_QwIIdXfpOZvOOT?usp=sharing)
 
 ## GitHub Repository
